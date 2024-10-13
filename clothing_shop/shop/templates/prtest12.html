@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image:url('123.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1{ 
+            text-align: center;
+        }
+        moi_cabinet{
+            color: #333;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #eee;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tab.active {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .profile-info, .order-history, .promo-codes, .notifications {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            margin-left: 10px;
+            padding: 5px;
+        }
+        .save-btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .order-item, .promo-item, .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .order-item:last-child, .promo-item:last-child, .notification-item:last-child {
+            border-bottom: none;
+        }
+        .order-item strong, .promo-item strong, .notification-item strong {
+            display: block;
+        }
+    </style>
+
+    <div class="container">
+        <h1 class="moi_cabinet">Личный кабинет</h1>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <div class="tab active" data-tab="profile">Мои данные</div>
+            <div class="tab" data-tab="orders">Мои заказы</div>
+            <div class="tab" data-tab="promo">Мои промокоды</div>
+            <div class="tab" data-tab="notifications">Уведомления</div>
+            <div class="tab" data-tab="logout">Выйти</div>
+        </div>
+
+        <!-- Секция "Мои данные" -->
+        <div id="profile" class="content-section active">
+            <h2>Мои данные</h2>
+            <form id="profileForm">
+                <div class="profile-info">
+                    <label>Имя:</label>
+                    <input type="text" id="name" name="name" value="{{user.username}}">
+                </div>
+                <div class="profile-info">
+                    <label>Email:</label>
+                    <input type="email" id="email" name="email" value="{{user.email}}">
+                </div>
+                <div class="profile-info">
+                    <label>Телефон:</label>
+                    <input type="tel" id="phone" name="phone" value="{{user.profile.phone_number}}">
+                </div>
+                <button type="button" class="save-btn" onclick="saveProfile()">Сохранить</button>
+            </form>
+        </div>
+
+        <!-- Секция "Мои заказы" -->
+        <div id="orders" class="content-section">
+            <h2>Мои заказы</h2>
+            <div id="orderHistory">
+                <!-- Заказы будут загружены с сервера -->
+            </div>
+        </div>
+
+        <!-- Секция "Мои промокоды" -->
+        <div id="promo" class="content-section">
+            <h2>Мои промокоды</h2>
+            <div id="promoCodes">
+                <!-- Промокоды будут загружены с сервера -->
+            </div>
+        </div>
+
+        <!-- Секция "Уведомления" -->
+        <div id="notifications" class="content-section">
+            <h2>Уведомления</h2>
+            <div id="notificationList">
+                <!-- Уведомления будут загружены с сервера -->
+            </div>
+        </div>
+
+        <!-- Секция "Выйти" --> 
+        <div id="logout" class="content-section">
+            <h2>Вы уверены, что хотите выйти?</h2>
+            <form action="{% url 'logout' %}?next=/" method="post">
+               {% csrf_token %}
+                <button type="submit" class="save-btn">Выйти из аккаунта</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Переключение между вкладками
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.content-section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(item => item.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Сохранение данных профиля
+        function saveProfile() {
+            const profileData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            };
+
+            fetch('https://your-server.com/api/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(profileData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Профиль успешно обновлен');
+            })
+            .catch(error => {
+                console.error('Ошибка при отправке данных профиля:', error);
+            });
+        }
+
+        // Загрузка истории заказов с сервера
+        function loadOrders() {
+            fetch('https://your-server.com/api/orders')
+            .then(response => response.json())
+            .then(data => {
+                const orderHistory = document.getElementById('orderHistory');
+                orderHistory.innerHTML = '';
+
+                data.forEach(order => {
+                    const orderItem = document.createElement('div');
+                    orderItem.classList.add('order-item');
+                    orderItem.innerHTML = `<strong>Заказ #${order.id}</strong>
+                                           <span>Дата: ${order.date}</span>
+                                           <span>Сумма: ${order.total} руб.</span>`;
+                    orderHistory.appendChild(orderItem);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке заказов:', error);
+            });
+        }
+
+        // Загрузка промокодов с сервера
+        function loadPromoCodes() {
+            fetch('https://your-server.com/api/promo')
+            .then(response => response.json())
+            .then(data => {
+                const promoCodes = document.getElementById('promoCodes');
+                promoCodes.innerHTML = '';
+
+                data.forEach(promo => {
+                    const promoItem = document.createElement('div');
+                    promoItem.classList.add('promo-item');
+                    promoItem.innerHTML = `<strong>Промокод: ${promo.code}</strong>
+                                           <span>Скидка: ${promo.discount}%</span>
+                                           <span>Действует до: ${promo.expiration}</span>`;
+                    promoCodes.appendChild(promoItem);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке промокодов:', error);
+            });
+        }
+
+        // Загрузка уведомлений с сервера
+        function loadNotifications() {
+            fetch('https://your-server.com/api/notifications')
+            .then(response => response.json())
+            .then(data => {
+                const notificationList = document.getElementById('notificationList');
+                notificationList.innerHTML = '';
+
+                data.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.classList.add('notification-item');
+                    notificationItem.innerHTML = `<strong>${notification.title}</strong>
+                                                 <span>${notification.message}</span>
+                                                 <span>Дата: ${notification.date}</span>`;
+                    notificationList.appendChild(notificationItem);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке уведомлений:', error);
+            });
+        }
+
+        // Загрузка данных при открытии соответствующих вкладок
+        document.querySelector('[data-tab="orders"]').addEventListener('click', loadOrders);
+        document.querySelector('[data-tab="promo"]').addEventListener('click', loadPromoCodes);
+        document.querySelector('[data-tab="notifications"]').addEventListener('click', loadNotifications);
+    </script>
+{% endblock %}

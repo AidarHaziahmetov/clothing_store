@@ -1,0 +1,91 @@
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column; /* Добавляем для расположения заголовка сверху */
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"],
+        input[type="email"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Убедитесь, что внутренние отступы не влияют на ширину */
+        }
+        input[type="submit"],
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .register {
+            text-align: center;
+            margin-top: 5px;
+        }
+        .register a {
+            color: #333;
+            text-decoration: none;
+        }
+        
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+        header h1 {
+            margin: 0;
+        }
+        body {
+            background-image: url('https://img.lovepik.com/bg/20231216/an-image-of-a-clothing-store_2490513_wh860.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="form-section" id="registrationSection">
+            <h2>Регистрация</h2>
+            <form method='post' id="registrationForm">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <p>Your username and password didn't match. Please try again.</p>
+                {% endif %}
+                <input type="text" id="regUsername" placeholder="Имя пользователя" name="username" required>
+                <input type="email" id="confirmPassword" name="email" placeholder="Почта" required>
+                <input type="password" id="regPassword" name="password1" placeholder="Пароль" required>
+                <input type="password" id="confirmPassword" name="password2" placeholder="Подтверждение пароля" required>
+                <input type="submit" value="Зарегистрироваться">
+            </form>
+            <button onclick="location.href='{% url 'login'%}'">Назад к входу</button>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,130 @@
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column; /* Добавляем для расположения заголовка сверху */
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Убедитесь, что внутренние отступы не влияют на ширину */
+        }
+        input[type="submit"],
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .register {
+            text-align: center;
+            margin-top: 5px;
+        }
+        .register a {
+            color: #333;
+            text-decoration: none;
+        }
+        .form-section {
+            display: none; /* Скрываем форму регистрации по умолчанию */
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+        }
+        header h1 {
+            margin: 0;
+        }
+        body {
+            background-image: url('https://img.lovepik.com/bg/20231216/an-image-of-a-clothing-store_2490513_wh860.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+{% extends "base.html" %}
+
+{% block content %}
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <div class="container">
+        <div class="login-form">
+            <h2>Вход в аккаунт</h2>
+            <form id="loginForm" action="{% url 'login' %}" method='post'>
+                {% csrf_token %}
+                <input type="text" id="username" name="username" placeholder="Имя пользователя" required>
+                <input type="password" id="password" name="password" placeholder="Пароль" required>
+                <input type="submit" value="Войти">
+            </form>
+            <div class="register">
+                <p>Нет аккаунта? <a href="{% url 'register'%}" id="registerLink">Зарегистрироваться</a></p>
+            </div>
+        </div>
+    </div> 
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            alert(`Вход: ${username} с паролем ${password}`);
+        });
+
+        document.getElementById('registerLink').addEventListener('click', function() {
+            document.querySelector('.login-form').style.display = 'none'; // Скрываем форму входа
+            document.getElementById('registrationSection').style.display = 'block'; // Показываем форму регистрации
+        });
+        
+
+        document.getElementById('backToLogin').addEventListener('click', function() {
+            document.getElementById('registrationSection').style.display = 'none'; // Скрываем форму регистрации
+            document.querySelector('.login-form').style.display = 'block'; // Показываем форму входа
+        });
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        const regUsername = document.getElementById('regUsername').value;
+        const regPassword = document.getElementById('regPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (regPassword !== confirmPassword) {
+            alert('Пароли не совпадают!');
+
+            return;
+        }
+        if (regPassword=='' || confirmPassword =='') {
+            alert('Пароль или потверждение пустое!');
+            return;
+        }
+        if (regPassword < 8) {
+            alert('Пароль слишком короткий');
+            return;
+        }
+        alert(`Регистрация успешна!\\nИмя пользователя: ${regUsername}\\nПароль: ${regPassword}`);
+    });
+    </script>
+{% endblock %}
