@@ -16,8 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
-from shop.views import display_image, index, login, base, profile,contact,RegisterView
+from shop.views import display_image, index, login, base, profile, contact, RegisterView, ProductListView, \
+    ProductDetailView, CartView, AddToCartView, UpdateCartQuantityView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,7 +27,13 @@ urlpatterns = [
     path("", index, name="index"),
     path("contact", contact, name="contact"),
     path("base", base, name="base"),
+
     path("profile/", profile, name="profile"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('register/', RegisterView.as_view(), name='register'),
+    path('test', ProductListView.as_view(), name='product_list'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
+    path('add_to_cart/<int:pk>/', AddToCartView.as_view(), name='add_to_cart'),
+    path('cart', CartView.as_view(), name='cart'),
+    path('update_cart_quantity', UpdateCartQuantityView.as_view(), name='update_cart_quantity'),
 ]
