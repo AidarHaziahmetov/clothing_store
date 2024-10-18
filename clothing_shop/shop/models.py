@@ -94,6 +94,7 @@ class Product(models.Model):
         verbose_name="Описание",
     )
     images = models.ManyToManyField("ProductImage", blank=True, related_name="products")
+    image_preview = models.ImageField(verbose_name="Превью", default="default.jpg", blank=True)
     stock = models.PositiveIntegerField(default=0, verbose_name="На складе")
     price = models.DecimalField(
         max_digits=15,
@@ -124,14 +125,22 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to="products/", verbose_name="Фото")
+    image = models.ImageField(upload_to="", verbose_name="Фото")
     def __str__(self):
-        return f"Изображение для {self.products.name}"
+        return f"Изображение"
 
     class Meta:
         verbose_name = "Изображение товаров"
         verbose_name_plural = "Изображения товаров"
-
+class ProductCharacteristic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='characteristics')
+    name = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
+    class Meta:
+        verbose_name = "Характеристика товара"
+        verbose_name_plural = "Характеристики товара"
+    def __str__(self):
+        return f"{self.product.name}: {self.name}: {self.value}"
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -200,3 +209,19 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE, related_name='cart_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    def get_total_price(self):
+        total = self.product.price * self.quantity
+        return total
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="cart")
+    def get_total_price(self):
+        total = 0
+        for item in self.cart_items.all():
+            total += item.get_total_price()
+        return total

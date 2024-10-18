@@ -52,3 +52,4 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.ProductImage)
+admin.site.register(models.ProductCharacteristic)

@@ -1,0 +1,9 @@
+{% extends "basev2.html" %}
+{% block extra_css %}
+    slideshow {display: none;}
+{% endblock %}
+{% block extra %}
+    {% load static %}
+
+    <img src = "{% static 'images/contact.jpg' %}" width="100%" alt = "Info"></img>
+{% endblock %}
