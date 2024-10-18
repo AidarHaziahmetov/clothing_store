@@ -1,0 +1,63 @@
+{% load django_bootstrap5 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    {% bootstrap_css %}
+    <style >
+        header {
+            color: #68696b;
+            background-color: #d7dddd /* Ваш желаемый цвет фона */
+        }
+        .navbar-brand {
+            color: #68696b; /* Ваш желаемый цвет фона */
+        } /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+        {% block extra_css %}
+        {% endblock %}
+    </style>
+</head>
+<body>
+    <header class="container-flex mb-5">
+        <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="{% url 'product_list' %}">
+                    <img src="{% static "images/logo2.jpg" %}" alt="Логотип" class="ms-3 me-3 rounded" height="70px">Магазин одежды</a>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link"  href="{% url 'product_list' %}">Главная</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Каталог</a>
+                        </li><li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">О нас</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'cart' %}">Корзина</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profile' %}">Личный кабинет</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#">Корзина</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+        </nav>
+    </header>
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+    {% block extra %}
+    {% endblock %}
+</body>
+{% bootstrap_javascript %}
+</html>
