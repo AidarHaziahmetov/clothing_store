@@ -75,7 +75,7 @@
     {% if form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
-    <div class="container">
+    <div class="col">
         <div class="login-form">
             <h2>Вход в аккаунт</h2>
             <form id="loginForm" action="{% url 'login' %}" method='post'>

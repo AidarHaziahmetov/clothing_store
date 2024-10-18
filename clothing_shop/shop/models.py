@@ -14,6 +14,7 @@ class User(AbstractUser):
         max_length=20, choices=ROLE_CHOICES, default="customer", verbose_name="Роль"
     )
 
+
     class Meta:
         ordering = ("username",)
         verbose_name = "Пользователь"

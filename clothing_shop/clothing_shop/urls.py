@@ -18,13 +18,15 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from shop.views import display_image, index, login, base, profile, contact, RegisterView, ProductListView, \
-    ProductDetailView, CartView, AddToCartView, UpdateCartQuantityView
+    ProductDetailView, CartView, AddToCartView, UpdateCartQuantityView, new_login
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("media/<str:image_name>", display_image, name="display_image"),
-    path("", index, name="index"),
+
+    path("", ProductListView.as_view(), name="index"),
     path("contact", contact, name="contact"),
     path("base", base, name="base"),
 
@@ -36,4 +38,7 @@ urlpatterns = [
     path('add_to_cart/<int:pk>/', AddToCartView.as_view(), name='add_to_cart'),
     path('cart', CartView.as_view(), name='cart'),
     path('update_cart_quantity', UpdateCartQuantityView.as_view(), name='update_cart_quantity'),
+    path('new_login', new_login, name='new_login'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/new_login.html'), name='login'),
+
 ]

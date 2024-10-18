@@ -48,7 +48,7 @@ def display_image(request, image_name):
 
 class RegisterView(FormView):
     form_class = UserRegisterForm
-    template_name = "registration/register.html"
+    template_name = "registration/new_register.html"
     success_url = reverse_lazy('index')
     def form_valid(self, form):
         form.save()
@@ -137,3 +137,7 @@ class UpdateCartQuantityView(View):
 
         except (Product.DoesNotExist, Cart.DoesNotExist, ValueError):
             return JsonResponse({'success': False, 'message': 'Произошла ошибка'})
+
+
+def new_login(request):
+    return render(request, "registration/new_login.html")
